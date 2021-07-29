@@ -11,12 +11,18 @@ struct SoloSetGameView: View {
     @ObservedObject var game = SoloSetGame()
     
     var body: some View {
-        ScrollView {
-            ForEach(game.dealt) { card in
-                CardView(card: card)
-                    .onTapGesture {
-                        game.choose(card)
-                    }
+        VStack {
+            Button("Deal Cards: \(game.deck.count)", action: { game.dealCards() })
+                .font(.largeTitle)
+                .disabled(game.deck.isEmpty)
+            
+            ScrollView {
+                ForEach(game.availableCards) { card in
+                    CardView(card: card, status: game.getStatus(for: card))
+                        .onTapGesture {
+                            game.select(card)
+                        }
+                }
             }
         }
     }
@@ -24,13 +30,21 @@ struct SoloSetGameView: View {
 
 struct CardView: View {
     let card: SoloSetGame.Card
+    let status: SoloSetGame.Status
     
     var body: some View {
-        Text(card.description)
-            .padding()
-            .font(card.isSelected ? .headline : .body)
-            .foregroundColor(card.isMatched ? .red : .primary)
-            .border(Color.purple, width: card.isMismatched ? 1 : 0)
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .strokeBorder(lineWidth: 3)
+                .foregroundColor( status.isCardSelected ? .black : .gray)
+            if status.areThreeCardsSelected && status.isCardSelected {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundColor( status.isSelectionASet ? .green : .red)
+            }
+            Text(card.description)
+                .font(status.isCardSelected ? .headline : .body)
+                .padding()
+        }
     }
 }
 
