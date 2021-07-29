@@ -8,18 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		03350A5F26AFA62700562721 /* SetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03350A5E26AFA62700562721 /* SetApp.swift */; };
-		03350A6126AFA62700562721 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03350A6026AFA62700562721 /* ContentView.swift */; };
+		03350A6126AFA62700562721 /* SoloSetGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03350A6026AFA62700562721 /* SoloSetGameView.swift */; };
 		03350A6326AFA62700562721 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03350A6226AFA62700562721 /* Assets.xcassets */; };
 		03350A6626AFA62700562721 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03350A6526AFA62700562721 /* Preview Assets.xcassets */; };
+		03350A6E26AFA71900562721 /* SoloSetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03350A6D26AFA71900562721 /* SoloSetGame.swift */; };
+		03350A7026AFA74200562721 /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03350A6F26AFA74200562721 /* SetGame.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		03350A5B26AFA62700562721 /* Set.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Set.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03350A5E26AFA62700562721 /* SetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetApp.swift; sourceTree = "<group>"; };
-		03350A6026AFA62700562721 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		03350A6026AFA62700562721 /* SoloSetGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoloSetGameView.swift; sourceTree = "<group>"; };
 		03350A6226AFA62700562721 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		03350A6526AFA62700562721 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		03350A6726AFA62700562721 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		03350A6D26AFA71900562721 /* SoloSetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoloSetGame.swift; sourceTree = "<group>"; };
+		03350A6F26AFA74200562721 /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +57,9 @@
 			isa = PBXGroup;
 			children = (
 				03350A5E26AFA62700562721 /* SetApp.swift */,
-				03350A6026AFA62700562721 /* ContentView.swift */,
+				03350A6026AFA62700562721 /* SoloSetGameView.swift */,
+				03350A6D26AFA71900562721 /* SoloSetGame.swift */,
+				03350A6F26AFA74200562721 /* SetGame.swift */,
 				03350A6226AFA62700562721 /* Assets.xcassets */,
 				03350A6726AFA62700562721 /* Info.plist */,
 				03350A6426AFA62700562721 /* Preview Content */,
@@ -138,8 +144,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03350A6126AFA62700562721 /* ContentView.swift in Sources */,
+				03350A6126AFA62700562721 /* SoloSetGameView.swift in Sources */,
 				03350A5F26AFA62700562721 /* SetApp.swift in Sources */,
+				03350A7026AFA74200562721 /* SetGame.swift in Sources */,
+				03350A6E26AFA71900562721 /* SoloSetGame.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
