@@ -8,24 +8,37 @@
 import Foundation
 
 struct SetGame {
+    // All the cards for a Set Game.
     private(set) var cards: Array<Card>
     
+    // Contains the indices for visible cards.
+    // On change it marks all the cards inside the array as dealt.
+    
+    // Card indices for the visible cards.
+    // Updates the dealt status once a card is added.
     private var availableCardsIndices: [Array<Card>.Index] {
         didSet{
             availableCardsIndices.forEach({ cards[$0].isDealt = true })
         }
     }
     
+    // Card indices for selected cards.
+    // Updates the selection and match status when a card is added or removed.
     private var selectedCardsIndices: [Array<Card>.Index] {
         didSet{
+            // Update selection for all cards.
             cards.indices.forEach({ cards[$0].isSelected = selectedCardsIndices.contains($0) })
+            
+            // Update match status for selected or available cards.
             if selectedCardsIndices.count == 3 {
+                // If there are 3 cards selected, then they are either a match or a mismatch.
                 if isSelectionASet {
                     selectedCardsIndices.forEach({ cards[$0].isMatched = true })
                 } else {
                     selectedCardsIndices.forEach({ cards[$0].isMismatched = true })
                 }
             } else {
+                // No cards should have match status, unless a trio is selected.
                 availableCardsIndices.forEach { index in
                     cards[index].isMatched = false
                     cards[index].isMismatched = false
@@ -34,22 +47,22 @@ struct SetGame {
         }
     }
     
+    // Cards available for the game.
     var deck: Array<Card> {
         cards.filter({ !$0.isDealt })
     }
     
-    var availableCards: Array<Card> {
+    // Playable cards in the game.
+    var visibleCards: Array<Card> {
         availableCardsIndices.map({ cards[$0] })
-    }
-    
-    var selectedCards: Array<Card> {
-        selectedCardsIndices.map({ cards[$0] })
     }
     
     init() {
         cards = []
         availableCardsIndices = []
         selectedCardsIndices = []
+        
+        // Create all cards.
         for number in Card.Number.allCases {
             for shape in Card.Shape.allCases {
                 for shading in Card.Shading.allCases {
@@ -74,8 +87,8 @@ struct SetGame {
         }
     }
     
-    // Try removing a card from the deck if there are any,
-    // and add it to the availableCards.
+    // Deal cards by adding them to the available cards indices array.
+    // We can only deal as many card as available.
     private mutating func dealCards(_ count: Int) {
         for _ in 0..<count {
             if let index = cards.firstIndex(where: { !$0.isDealt }) {
@@ -84,12 +97,13 @@ struct SetGame {
         }
     }
     
-    // Checks if the selectedCards forms a Set.
+    // Checks if the selected cards form a Set.
     private var isSelectionASet: Bool {
-        // Selection must contain three cards.
+        // Selection must contain 3 cards.
         guard selectedCardsIndices.count == 3 else { return false }
         
-        let currentlySelectedCards = selectedCards
+        // Obtain the currently selected cards via their indices.
+        let currentlySelectedCards = selectedCardsIndices.map({ cards[$0] })
         
         // All properties must be either all the same or all different.
         // Having a collection with two unique members means the selection cannot be a Set.
@@ -103,15 +117,19 @@ struct SetGame {
     }
     
     // Called after a Set is accomplished.
-    // Replaces selected and matched cards in place if there are cards in the deck.
-    // Otherwise removes the selected cards from availableCards.
+    // Replaces selected cards in place if there are any available.
+    // Otherwise removes the selected cards from the available cards list.
     private mutating func replaceSelectedCards() {
         // Replacement only occurs when there is a Set selected.
         guard isSelectionASet == true else { return }
         
+        // Each selected card must be updated individually.
         selectedCardsIndices.forEach { selectedIndex in
+            // First we need to determine the position of the selected index in
+            // the available cards indices. This value must exist!
             let indexPosition = availableCardsIndices.firstIndex(of: selectedIndex)!
             
+            // Replace the card if there are any available, or remove it.
             if let newIndex = cards.firstIndex(where: { !$0.isDealt }) {
                 availableCardsIndices[indexPosition] = newIndex
             } else {
@@ -119,14 +137,21 @@ struct SetGame {
             }
         }
         
+        // All selected cards are processed.
+        // Deselect all cards.
         selectedCardsIndices.removeAll()
     }
     
+    // Used by the ViewModel to select a given card.
     mutating func select(_ card: Card) {
+        // First we need to find the index value for the given card.
         guard let chosenIndex = cards.firstIndex(of: card) else { return }
+        
+        // Select the card at the chosen index.
         selectTheCard(at: chosenIndex)
     }
     
+    // Selects the card at the given index.
     private mutating func selectTheCard(at index: Array<Card>.Index) {
         // Only available cards can be selected.
         guard availableCardsIndices.contains(index) else { return }
@@ -148,7 +173,7 @@ struct SetGame {
             // Replace matched cards with new ones.
             replaceSelectedCards()
             
-            // Selected the card if it is still available.
+            // Selected the chosen card if it is still available.
             if availableCardsIndices.contains(index) {
                 selectedCardsIndices.append(index)
             }
@@ -166,11 +191,13 @@ struct SetGame {
     struct Card: Identifiable, Equatable {
         let id = UUID()
         
+        // Card value variables.
         let number: Number
         let shape: Shape
         let shading: Shading
         let color: Color
         
+        // Card status variables.
         var isDealt = false
         var isSelected = false
         var isMatched = false

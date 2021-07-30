@@ -17,7 +17,7 @@ struct SoloSetGameView: View {
                 .disabled(game.deck.isEmpty)
             
             ScrollView {
-                ForEach(game.availableCards) { card in
+                ForEach(game.visibleCards) { card in
                     CardView(card: card)
                         .onTapGesture {
                             game.select(card)
