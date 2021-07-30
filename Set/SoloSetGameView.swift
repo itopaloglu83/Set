@@ -30,19 +30,22 @@ struct SoloSetGameView: View {
 
 struct CardView: View {
     let card: SoloSetGame.Card
-    let status: SoloSetGame.Status
+    let status: SoloSetGame.CardStatus
     
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(lineWidth: 3)
-                .foregroundColor( status.isCardSelected ? .black : .gray)
-            if status.areThreeCardsSelected && status.isCardSelected {
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundColor( status.isSelectionASet ? .green : .red)
+            let roundedShape = RoundedRectangle(cornerRadius: 10)
+            
+            if status.isHighlighted {
+                roundedShape
+                    .foregroundColor(status.isSelectionASet ? .green : .red)
             }
+            
+            roundedShape
+                .strokeBorder(lineWidth: 3)
+                .foregroundColor(status.isSelected ? .black : .gray)
+            
             Text(card.description)
-                .font(status.isCardSelected ? .headline : .body)
                 .padding()
         }
     }

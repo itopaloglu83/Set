@@ -8,10 +8,15 @@
 import Foundation
 
 struct SetGame {
+    // All cards starts in the deck.
+    // As cards are selected, they are moved to availableCards.
+    // Once a card trio is matched, they are then moved to removedCards.
     private(set) var deck: Array<Card>
     private(set) var availableCards: Array<Card>
     private(set) var removedCards: Array<Card>
     
+    // TODO: Replace selectedCards with selectedIndices in availableCards.
+    // A copy of selected cards are added to selectedCards to keep tally.
     private(set) var selectedCards: Array<Card>
     
     init() {
@@ -25,13 +30,28 @@ struct SetGame {
                 }
             }
         }
+        
+        // The game starts with full deck and nothing else.
         availableCards = []
         removedCards = []
         selectedCards = []
         
-//        dealCards()
+        // Initial card deal.
+        dealCards()
     }
     
+    // Deal 12 cards to start the game.
+    // Deal 3 cards on all subsequent calls.
+    mutating func dealCards() {
+        if availableCards.isEmpty {
+            dealCards(12)
+        } else {
+            dealCards(3)
+        }
+    }
+    
+    // Try removing a card from the deck if there are any,
+    // and add it to the availableCards.
     private mutating func dealCards(_ count: Int) {
         for _ in 0..<count {
             if let card = deck.popLast() {
@@ -40,37 +60,19 @@ struct SetGame {
         }
     }
     
-    mutating func dealCards() {
-        dealCards(3)
-//        if !deck.isEmpty {
-//            if availableCards.isEmpty {
-//                dealCards(6)
-//            } else {
-//                dealCards(3)
-//            }
-//        }
-    }
-    
-    private mutating func replaceSelectedCards() {
-        for card in selectedCards {
-            if let newCard = deck.popLast() {
-                availableCards[availableCards.firstIndex(of: card)!] = newCard
-            } else {
-                availableCards.removeAll(where: { $0.id == card.id })
-            }
-            removedCards.append(card)
-        }
-        selectedCards.removeAll()
-    }
-    
-    var areThreeCardsSelected: Bool {
-        selectedCards.count == 3
-    }
-    
+    // Returns if a card is selected.
+    // Used by ViewModel to translate model status to view requirements.
     func isCardSelected(_ card: Card) -> Bool {
         selectedCards.contains(card)
     }
     
+    // Return if there are three cards selected.
+    // Used by ViewModel to translate model status to view requirements.
+    var areThreeCardsSelected: Bool {
+        selectedCards.count == 3
+    }
+    
+    // Checks if the selectedCards forms a Set.
     var isSelectionASet: Bool {
         // Selection must contain three cards.
         guard selectedCards.count == 3 else { return false }
@@ -86,6 +88,33 @@ struct SetGame {
         return true
     }
     
+    // Called after a Set is accomplished.
+    // Replaces selected and matched cards in place if there are cards in the deck.
+    // Otherwise removes the selected cards from availableCards.
+    private mutating func replaceSelectedCards() {
+        // Replacement only occurs when there is a Set selected.
+        guard isSelectionASet == true else { return }
+        
+        for card in selectedCards {
+            // Take a card from the deck if there are any.
+            if let newCard = deck.popLast() {
+                // Replace the card in place with the new one.
+                availableCards[availableCards.firstIndex(of: card)!] = newCard
+            } else {
+                // No cards left in the deck. Remove the matched card.
+                availableCards.removeAll(where: { $0.id == card.id })
+            }
+            
+            // Add the card to removedCards for record keeping.
+            removedCards.append(card)
+        }
+        
+        // Deselect all cards.
+        selectedCards.removeAll()
+    }
+    
+    // Selects a card that is in availableCards.
+    // Subsequent calls either replaces the matched cards or updates the card selection.
     mutating func select(_ card: Card) {
         // Only dealt cards can be selected.
         guard availableCards.contains(card) else { return }
@@ -97,25 +126,34 @@ struct SetGame {
             return
         }
         
+        // Select the card and return, unless there is already a trio selected.
         if selectedCards.count < 3 {
             selectedCards.append(card)
-        } else {
-            if isSelectionASet {
-                // Replace matched cards and deal new ones.
-                replaceSelectedCards()
-                
-                // Select the card if it's still available.
-                if availableCards.contains(card) {
-                    selectedCards.append(card)
-                }
-            } else {
-                // Deselect all currently selected cards.
-                selectedCards.removeAll()
+            return
+        }
+        
+        // There are already three cards selected.
+        // Either replace the selected cards or make a card selection.
+        if isSelectionASet {
+            // Replace matched cards with new ones.
+            replaceSelectedCards()
+            
+            // Selected the card if it is still available.
+            if availableCards.contains(card) {
                 selectedCards.append(card)
             }
+        } else {
+            // The trio was not a set.
+            // Deselect all currently selected cards.
+            selectedCards.removeAll()
+            
+            // Select the card.
+            selectedCards.append(card)
         }
     }
     
+    // TODO: Create a new Set Card struct that encompasses value and style together.
+    // Set Card
     struct Card: Identifiable, Equatable {
         let id = UUID()
         

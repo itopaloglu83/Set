@@ -20,16 +20,17 @@ class SoloSetGame: ObservableObject {
         model.availableCards
     }
     
-    func getStatus(for card: Card) -> Status {
-        Status(
-            isCardSelected: model.isCardSelected(card),
-            areThreeCardsSelected: model.areThreeCardsSelected,
-            isSelectionASet: model.isSelectionASet)
+    func getStatus(for card: Card) -> CardStatus {
+        CardStatus(
+            isSelected: model.isCardSelected(card),
+            isHighlighted: model.isCardSelected(card) && model.areThreeCardsSelected,
+            isSelectionASet: model.isSelectionASet
+        )
     }
     
-    struct Status {
-        let isCardSelected: Bool
-        let areThreeCardsSelected: Bool
+    struct CardStatus {
+        let isSelected: Bool
+        let isHighlighted: Bool
         let isSelectionASet: Bool
     }
     
