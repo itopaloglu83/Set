@@ -18,7 +18,7 @@ struct SoloSetGameView: View {
             
             ScrollView {
                 ForEach(game.availableCards) { card in
-                    CardView(card: card, status: game.getStatus(for: card))
+                    CardView(card: card)
                         .onTapGesture {
                             game.select(card)
                         }
@@ -30,20 +30,19 @@ struct SoloSetGameView: View {
 
 struct CardView: View {
     let card: SoloSetGame.Card
-    let status: SoloSetGame.CardStatus
     
     var body: some View {
         ZStack {
             let roundedShape = RoundedRectangle(cornerRadius: 10)
             
-            if status.isHighlighted {
+            if card.isMatched || card.isMismatched {
                 roundedShape
-                    .foregroundColor(status.isSelectionASet ? .green : .red)
+                    .foregroundColor(card.isMatched ? .green : .red)
             }
             
             roundedShape
                 .strokeBorder(lineWidth: 3)
-                .foregroundColor(status.isSelected ? .black : .gray)
+                .foregroundColor(card.isSelected ? .black : .gray)
             
             Text(card.description)
                 .padding()

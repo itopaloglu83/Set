@@ -8,33 +8,57 @@
 import Foundation
 
 struct SetGame {
-    // All cards starts in the deck.
-    // As cards are selected, they are moved to availableCards.
-    // Once a card trio is matched, they are then moved to removedCards.
-    private(set) var deck: Array<Card>
-    private(set) var availableCards: Array<Card>
-    private(set) var removedCards: Array<Card>
+    private(set) var cards: Array<Card>
     
-    // TODO: Replace selectedCards with selectedIndices in availableCards.
-    // A copy of selected cards are added to selectedCards to keep tally.
-    private(set) var selectedCards: Array<Card>
+    private var availableCardsIndices: [Array<Card>.Index] {
+        didSet{
+            availableCardsIndices.forEach({ cards[$0].isDealt = true })
+        }
+    }
+    
+    private var selectedCardsIndices: [Array<Card>.Index] {
+        didSet{
+            cards.indices.forEach({ cards[$0].isSelected = selectedCardsIndices.contains($0) })
+            if selectedCardsIndices.count == 3 {
+                if isSelectionASet {
+                    selectedCardsIndices.forEach({ cards[$0].isMatched = true })
+                } else {
+                    selectedCardsIndices.forEach({ cards[$0].isMismatched = true })
+                }
+            } else {
+                availableCardsIndices.forEach { index in
+                    cards[index].isMatched = false
+                    cards[index].isMismatched = false
+                }
+            }
+        }
+    }
+    
+    var deck: Array<Card> {
+        cards.filter({ !$0.isDealt })
+    }
+    
+    var availableCards: Array<Card> {
+        availableCardsIndices.map({ cards[$0] })
+    }
+    
+    var selectedCards: Array<Card> {
+        selectedCardsIndices.map({ cards[$0] })
+    }
     
     init() {
-        deck = []
+        cards = []
+        availableCardsIndices = []
+        selectedCardsIndices = []
         for number in Card.Number.allCases {
             for shape in Card.Shape.allCases {
                 for shading in Card.Shading.allCases {
                     for color in Card.Color.allCases {
-                        deck.append(Card(number, shape, shading, color))
+                        cards.append(Card(number, shape, shading, color))
                     }
                 }
             }
         }
-        
-        // The game starts with full deck and nothing else.
-        availableCards = []
-        removedCards = []
-        selectedCards = []
         
         // Initial card deal.
         dealCards()
@@ -43,7 +67,7 @@ struct SetGame {
     // Deal 12 cards to start the game.
     // Deal 3 cards on all subsequent calls.
     mutating func dealCards() {
-        if availableCards.isEmpty {
+        if availableCardsIndices.isEmpty {
             dealCards(12)
         } else {
             dealCards(3)
@@ -54,35 +78,25 @@ struct SetGame {
     // and add it to the availableCards.
     private mutating func dealCards(_ count: Int) {
         for _ in 0..<count {
-            if let card = deck.popLast() {
-                availableCards.append(card)
+            if let index = cards.firstIndex(where: { !$0.isDealt }) {
+                availableCardsIndices.append(index)
             }
         }
     }
     
-    // Returns if a card is selected.
-    // Used by ViewModel to translate model status to view requirements.
-    func isCardSelected(_ card: Card) -> Bool {
-        selectedCards.contains(card)
-    }
-    
-    // Return if there are three cards selected.
-    // Used by ViewModel to translate model status to view requirements.
-    var areThreeCardsSelected: Bool {
-        selectedCards.count == 3
-    }
-    
     // Checks if the selectedCards forms a Set.
-    var isSelectionASet: Bool {
+    private var isSelectionASet: Bool {
         // Selection must contain three cards.
-        guard selectedCards.count == 3 else { return false }
+        guard selectedCardsIndices.count == 3 else { return false }
+        
+        let currentlySelectedCards = selectedCards
         
         // All properties must be either all the same or all different.
         // Having a collection with two unique members means the selection cannot be a Set.
-        if Set<Card.Number>(selectedCards.map({ $0.number })).count == 2 { return false }
-        if Set<Card.Shape>(selectedCards.map({ $0.shape })).count == 2 { return false }
-        if Set<Card.Shading>(selectedCards.map({ $0.shading })).count == 2 { return false }
-        if Set<Card.Color>(selectedCards.map({ $0.color })).count == 2 { return false }
+        if Set<Card.Number>(currentlySelectedCards.map({ $0.number })).count == 2 { return false }
+        if Set<Card.Shape>(currentlySelectedCards.map({ $0.shape })).count == 2 { return false }
+        if Set<Card.Shading>(currentlySelectedCards.map({ $0.shading })).count == 2 { return false }
+        if Set<Card.Color>(currentlySelectedCards.map({ $0.color })).count == 2 { return false }
         
         // Selection is a Set if the program flow can reach here.
         return true
@@ -95,64 +109,59 @@ struct SetGame {
         // Replacement only occurs when there is a Set selected.
         guard isSelectionASet == true else { return }
         
-        for card in selectedCards {
-            // Take a card from the deck if there are any.
-            if let newCard = deck.popLast() {
-                // Replace the card in place with the new one.
-                availableCards[availableCards.firstIndex(of: card)!] = newCard
-            } else {
-                // No cards left in the deck. Remove the matched card.
-                availableCards.removeAll(where: { $0.id == card.id })
-            }
+        selectedCardsIndices.forEach { selectedIndex in
+            let indexPosition = availableCardsIndices.firstIndex(of: selectedIndex)!
             
-            // Add the card to removedCards for record keeping.
-            removedCards.append(card)
+            if let newIndex = cards.firstIndex(where: { !$0.isDealt }) {
+                availableCardsIndices[indexPosition] = newIndex
+            } else {
+                availableCardsIndices.remove(at: indexPosition)
+            }
         }
         
-        // Deselect all cards.
-        selectedCards.removeAll()
+        selectedCardsIndices.removeAll()
     }
     
-    // Selects a card that is in availableCards.
-    // Subsequent calls either replaces the matched cards or updates the card selection.
     mutating func select(_ card: Card) {
-        // Only dealt cards can be selected.
-        guard availableCards.contains(card) else { return }
+        guard let chosenIndex = cards.firstIndex(of: card) else { return }
+        selectTheCard(at: chosenIndex)
+    }
+    
+    private mutating func selectTheCard(at index: Array<Card>.Index) {
+        // Only available cards can be selected.
+        guard availableCardsIndices.contains(index) else { return }
         
-        // If the card is already selected and there are less than three cards selected
-        // then allow the user to deselect the card and return.
-        if selectedCards.contains(card) && selectedCards.count < 3 {
-            selectedCards.removeAll(where: { $0.id == card.id })
+        // If there are less than 3 cards selected.
+        // Either select or deselect the index and return.
+        if selectedCardsIndices.count < 3 {
+            if selectedCardsIndices.contains(index) {
+                selectedCardsIndices.removeAll(where: { $0 == index })
+            } else {
+                selectedCardsIndices.append(index)
+            }
             return
         }
         
-        // Select the card and return, unless there is already a trio selected.
-        if selectedCards.count < 3 {
-            selectedCards.append(card)
-            return
-        }
-        
-        // There are already three cards selected.
+        // If there are already 3 cards selected.
         // Either replace the selected cards or make a card selection.
         if isSelectionASet {
             // Replace matched cards with new ones.
             replaceSelectedCards()
             
             // Selected the card if it is still available.
-            if availableCards.contains(card) {
-                selectedCards.append(card)
+            if availableCardsIndices.contains(index) {
+                selectedCardsIndices.append(index)
             }
         } else {
             // The trio was not a set.
             // Deselect all currently selected cards.
-            selectedCards.removeAll()
+            selectedCardsIndices.removeAll()
             
             // Select the card.
-            selectedCards.append(card)
+            selectedCardsIndices.append(index)
         }
     }
     
-    // TODO: Create a new Set Card struct that encompasses value and style together.
     // Set Card
     struct Card: Identifiable, Equatable {
         let id = UUID()
@@ -161,6 +170,11 @@ struct SetGame {
         let shape: Shape
         let shading: Shading
         let color: Color
+        
+        var isDealt = false
+        var isSelected = false
+        var isMatched = false
+        var isMismatched = false
         
         init(_ number: Number, _ shape: Shape, _ shading: Shading, _ color: Color) {
             self.number = number

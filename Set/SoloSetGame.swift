@@ -20,20 +20,6 @@ class SoloSetGame: ObservableObject {
         model.availableCards
     }
     
-    func getStatus(for card: Card) -> CardStatus {
-        CardStatus(
-            isSelected: model.isCardSelected(card),
-            isHighlighted: model.isCardSelected(card) && model.areThreeCardsSelected,
-            isSelectionASet: model.isSelectionASet
-        )
-    }
-    
-    struct CardStatus {
-        let isSelected: Bool
-        let isHighlighted: Bool
-        let isSelectionASet: Bool
-    }
-    
     // MARK: - Intent(s)
     
     func dealCards() {
