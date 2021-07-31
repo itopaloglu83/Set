@@ -81,7 +81,7 @@ struct SetGame {
     // Deal 3 cards on all subsequent calls.
     mutating func dealCards() {
         if availableCardsIndices.isEmpty {
-            dealCards(12)
+            dealCards(9)
         } else {
             dealCards(3)
         }
@@ -211,7 +211,12 @@ struct SetGame {
         }
         
         var description: String {
-            "\(number):\(shape):\(shading):\(color)"
+            """
+            \(number)
+            \(shape)
+            \(shading)
+            \(color)
+            """
         }
         
         // Number, Shape, Shading, Color
