@@ -43,7 +43,8 @@ struct SetAppView: View {
         Button {
             closure()
         } label: {
-            Text(title).font(.headline)
+            Text(title)
+                .font(.headline)
         }
         .padding(.horizontal)
     }

@@ -13,7 +13,7 @@ struct SoloSetGameView: View {
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
-                let width: CGFloat = bestCardWidth(itemCount: game.visibleCards.count,
+                let width = bestCardWidth(itemCount: game.visibleCards.count,
                                                    in: geometry.size,
                                                    aspectRatio: 3/4)
                 

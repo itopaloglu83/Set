@@ -61,8 +61,9 @@ struct SetGameModel<FeatureOne, FeatureTwo, FeatureThree, FeatureFour> where Fea
     // Used by the ViewModel to select a given card.
     mutating func select(_ card: Card) {
         // First we need to find the index of the given card.
+        guard let chosenIndex = cards.firstIndex(of: card) else { return }
         // Only visible cards can be selected.
-        guard let chosenIndex = visibleCards.firstIndex(of: card) else { return }
+        guard visibleCards.contains(cards[chosenIndex]) else { return }
         
         // If there are no matched cards then
         // we are in the selection mode.

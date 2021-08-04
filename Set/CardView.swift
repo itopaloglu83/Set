@@ -47,8 +47,8 @@ struct CardView: View {
             }
             .contentShape(Rectangle())
         }
-        .padding(1)
-        .aspectRatio(3/4, contentMode: .fit)
+//        .padding(1)
+//        .aspectRatio(3/4, contentMode: .fit)
     }
     
     // TODO: Create a CardShape struct.
@@ -89,7 +89,7 @@ struct CardView: View {
         var body: some View {
             CardShape(shape: shape)
                 .cardStyle(for: shading)
-                .aspectRatio(9/4, contentMode: .fit)
+                .aspectRatio(5/7 * 3, contentMode: .fit)
                 .foregroundColor(color)
         }
         
