@@ -13,8 +13,10 @@
 		03350A6626AFA62700562721 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03350A6526AFA62700562721 /* Preview Assets.xcassets */; };
 		03350A6E26AFA71900562721 /* SoloSetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03350A6D26AFA71900562721 /* SoloSetGame.swift */; };
 		03350A7026AFA74200562721 /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03350A6F26AFA74200562721 /* SetGame.swift */; };
+		03506DC226B6269E001856E5 /* Diamond.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03506DC126B6269E001856E5 /* Diamond.swift */; };
 		03A1AD0526B4F4740055B3FB /* SetAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A1AD0426B4F4740055B3FB /* SetAppView.swift */; };
 		03A1AD0726B4F65A0055B3FB /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A1AD0626B4F65A0055B3FB /* CardView.swift */; };
+		03F6284626B8552A001A866F /* SetGameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F6284526B8552A001A866F /* SetGameModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,8 +28,10 @@
 		03350A6726AFA62700562721 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		03350A6D26AFA71900562721 /* SoloSetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoloSetGame.swift; sourceTree = "<group>"; };
 		03350A6F26AFA74200562721 /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
+		03506DC126B6269E001856E5 /* Diamond.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diamond.swift; sourceTree = "<group>"; };
 		03A1AD0426B4F4740055B3FB /* SetAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetAppView.swift; sourceTree = "<group>"; };
 		03A1AD0626B4F65A0055B3FB /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		03F6284526B8552A001A866F /* SetGameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,8 +68,10 @@
 				03A1AD0426B4F4740055B3FB /* SetAppView.swift */,
 				03350A6026AFA62700562721 /* SoloSetGameView.swift */,
 				03A1AD0626B4F65A0055B3FB /* CardView.swift */,
+				03506DC126B6269E001856E5 /* Diamond.swift */,
 				03350A6D26AFA71900562721 /* SoloSetGame.swift */,
 				03350A6F26AFA74200562721 /* SetGame.swift */,
+				03F6284526B8552A001A866F /* SetGameModel.swift */,
 				03350A6226AFA62700562721 /* Assets.xcassets */,
 				03350A6726AFA62700562721 /* Info.plist */,
 				03350A6426AFA62700562721 /* Preview Content */,
@@ -153,6 +159,8 @@
 				03A1AD0726B4F65A0055B3FB /* CardView.swift in Sources */,
 				03350A6126AFA62700562721 /* SoloSetGameView.swift in Sources */,
 				03350A5F26AFA62700562721 /* SetApp.swift in Sources */,
+				03506DC226B6269E001856E5 /* Diamond.swift in Sources */,
+				03F6284626B8552A001A866F /* SetGameModel.swift in Sources */,
 				03350A7026AFA74200562721 /* SetGame.swift in Sources */,
 				03350A6E26AFA71900562721 /* SoloSetGame.swift in Sources */,
 				03A1AD0526B4F4740055B3FB /* SetAppView.swift in Sources */,

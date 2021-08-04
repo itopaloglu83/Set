@@ -11,8 +11,7 @@ struct SetGame {
     // All the cards for a Set Game.
     private(set) var cards: Array<Card>
     
-    // Contains the indices for visible cards.
-    // On change it marks all the cards inside the array as dealt.
+    private(set) var score = 0
     
     // Card indices for the visible cards.
     // Updates the dealt status once a card is added.
@@ -73,6 +72,9 @@ struct SetGame {
             }
         }
         
+        // Shuffle the cards.
+        cards.shuffle()
+        
         // Initial card deal.
         dealCards()
     }
@@ -81,10 +83,25 @@ struct SetGame {
     // Deal 3 cards on all subsequent calls.
     mutating func dealCards() {
         if availableCardsIndices.isEmpty {
-            dealCards(9)
+            dealCards(12)
         } else {
             dealCards(3)
         }
+    }
+    
+    mutating func shuffle() {
+        availableCardsIndices.forEach({ cards[$0].isDealt = false })
+        availableCardsIndices.removeAll()
+        
+        availableCardsIndices.forEach { index in
+            cards[index].isMatched = false
+            cards[index].isMismatched = false
+        }
+        selectedCardsIndices.removeAll()
+        
+        cards.shuffle()
+        
+        dealCards()
     }
     
     // Deal cards by adding them to the available cards indices array.
@@ -137,6 +154,8 @@ struct SetGame {
             }
         }
         
+        score += 1
+        
         // All selected cards are processed.
         // Deselect all cards.
         selectedCardsIndices.removeAll()
@@ -173,7 +192,7 @@ struct SetGame {
             // Replace matched cards with new ones.
             replaceSelectedCards()
             
-            // Selected the chosen card if it is still available.
+            // Select the chosen card if it is still available.
             if availableCardsIndices.contains(index) {
                 selectedCardsIndices.append(index)
             }
@@ -220,8 +239,8 @@ struct SetGame {
         }
         
         // Number, Shape, Shading, Color
-        enum Number: CaseIterable {
-            case one, two, three
+        enum Number: Int, CaseIterable {
+            case one = 1, two, three
         }
         
         enum Shape: CaseIterable {

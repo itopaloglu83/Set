@@ -14,36 +14,38 @@ struct SetAppView: View {
         VStack {
             Text("Solo Set Game")
                 .font(.largeTitle)
+                .bold()
+                .onTapGesture {
+                    game.shuffle()
+                }
             
             SoloSetGameView(game: game)
                 .padding(.horizontal)
             
             HStack {
-                newGameButton
-                dealCardsButton
+                menuButton(title: "New Game") {
+                    game.newGame()
+                }
+                
+                Text("Score: \(game.score)")
+                    .font(.headline)
+                    .padding()
+                
+                menuButton(title: "Deal Cards") {
+                    game.deal()
+                }
+                .disabled(game.deck.isEmpty)
             }
         }
     }
     
-    private var newGameButton: some View {
-        Button(action: {
-            game.newGame()
-        }, label: {
-            Text("New Game")
-                .font(.title)
-        })
+    private func menuButton(title: String, closure: @escaping ()-> Void) -> some View {
+        Button {
+            closure()
+        } label: {
+            Text(title).font(.headline)
+        }
         .padding(.horizontal)
-    }
-    
-    private var dealCardsButton: some View {
-        Button(action: {
-            game.dealCards()
-        }, label: {
-            Text("Deal Cards")
-                .font(.title)
-        })
-        .padding(.horizontal)
-        .disabled(game.deck.isEmpty)
     }
 }
 

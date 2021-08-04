@@ -15,7 +15,7 @@ struct SoloSetGameView: View {
             ScrollView {
                 let width: CGFloat = bestCardWidth(itemCount: game.visibleCards.count,
                                                    in: geometry.size,
-                                                   aspectRatio: 2/3)
+                                                   aspectRatio: 3/4)
                 
                 LazyVGrid(columns: [adaptiveGridItem(width: width)], spacing: 0) {
                     ForEach(game.visibleCards) { card in
@@ -55,14 +55,14 @@ struct SoloSetGameView: View {
         
         let bestWidth = floor(size.width / CGFloat(columnCount))
         
-        return max(bestWidth, 60)
+        return max(bestWidth, 70)
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        let game = SoloSetGame()
-        
-        return SoloSetGameView(game: game)
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let game = SoloSetGame()
+//
+//        return SoloSetGameView(game: game)
+//    }
+//}
