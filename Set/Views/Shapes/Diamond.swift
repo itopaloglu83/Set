@@ -2,21 +2,23 @@
 //  Diamond.swift
 //  Set
 //
-//  Created by İhsan TOPALOĞLU on 7/31/21.
+//  Created by İhsan TOPALOĞLU on 8/6/21.
 //
 
 import SwiftUI
 
-struct Diamond: Shape, InsettableShape {
+struct Diamond: InsettableShape {
     var insetAmount: CGFloat = 0
     
     func inset(by amount: CGFloat) -> some InsettableShape {
-        var diamond = self
-        diamond.insetAmount += amount
-        return diamond
+        var shape = self
+        shape.insetAmount += amount
+        return shape
     }
     
     func path(in rect: CGRect) -> Path {
+        let rect = rect.insetBy(dx: insetAmount, dy: insetAmount)
+        
         var path = Path()
         
         path.move(to: CGPoint(x: rect.midX, y: rect.minY))
@@ -25,7 +27,6 @@ struct Diamond: Shape, InsettableShape {
         path.addLine(to: CGPoint(x: rect.minX, y: rect.midY))
         path.closeSubpath()
         
-        // Rectangle().path(in: rect)
         return path
     }
 }
@@ -33,6 +34,7 @@ struct Diamond: Shape, InsettableShape {
 struct Diamond_Previews: PreviewProvider {
     static var previews: some View {
         Diamond()
-            .aspectRatio(2, contentMode: .fit)
+            .aspectRatio(11 / 5, contentMode: .fit)
+            .frame(width: 200)
     }
 }

@@ -1,31 +1,39 @@
 //
-//  SoloSetGameView.swift
+//  CardVGrid.swift
 //  Set
 //
-//  Created by İhsan TOPALOĞLU on 7/26/21.
+//  Created by İhsan TOPALOĞLU on 8/6/21.
 //
 
 import SwiftUI
 
-struct SoloSetGameView: View {
-    @ObservedObject var game: SoloSetGame
+struct CardVGrid<Item, ItemView>: View where Item: Identifiable, ItemView: View {
+    var items: [Item]
+    var aspectRatio: CGFloat
+    var content: (Item) -> ItemView
+    
+    init(items: [Item], aspectRatio: CGFloat, @ViewBuilder content: @escaping (Item) -> ItemView ) {
+        self.items = items
+        self.aspectRatio = aspectRatio
+        self.content = content
+    }
     
     var body: some View {
         GeometryReader { geometry in
-            ScrollView {
-                let width = bestCardWidth(itemCount: game.visibleCards.count,
-                                                   in: geometry.size,
-                                                   aspectRatio: 3/4)
+            //ScrollView(showsIndicators: false) {
+                let cardWidth = bestCardWidth(
+                    itemCount: items.count,
+                    in: geometry.size,
+                    aspectRatio: aspectRatio
+                )
                 
-                LazyVGrid(columns: [adaptiveGridItem(width: width)], spacing: 0) {
-                    ForEach(game.visibleCards) { card in
-                        CardView(card: card)
-                            .onTapGesture {
-                                game.select(card)
-                            }
+                LazyVGrid(columns: [adaptiveGridItem(width: cardWidth)], spacing: 0) {
+                    ForEach(items) { item in
+                        content(item)
+                            .aspectRatio(aspectRatio, contentMode: .fit)
                     }
                 }
-            }
+            //}
         }
     }
     
@@ -53,16 +61,6 @@ struct SoloSetGameView: View {
             columnCount = itemCount
         }
         
-        let bestWidth = floor(size.width / CGFloat(columnCount))
-        
-        return max(bestWidth, 70)
+        return floor(size.width / CGFloat(columnCount))
     }
 }
-
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        let game = SoloSetGame()
-//
-//        return SoloSetGameView(game: game)
-//    }
-//}
